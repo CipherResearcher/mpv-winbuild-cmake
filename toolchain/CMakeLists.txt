@@ -21,7 +21,9 @@ list(APPEND ep
     llvm-clang
 )
 foreach(package IN LISTS ep)
-    if(NOT ${SINGLE_SOURCE_LOCATION} STREQUAL "")
+    if(DEFINED TOOLCHAIN_SOURCE_LOCATION AND NOT "${TOOLCHAIN_SOURCE_LOCATION}" STREQUAL "")
+        set(SOURCE_LOCATION "${TOOLCHAIN_SOURCE_LOCATION}/${package}")
+    elseif(NOT "${SINGLE_SOURCE_LOCATION}" STREQUAL "")
         set(SOURCE_LOCATION "${SINGLE_SOURCE_LOCATION}/${package}")
     endif()
     if(package MATCHES "llvm")

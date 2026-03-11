@@ -4,12 +4,13 @@ ExternalProject_Add(openssl
         zstd
         brotli
     GIT_REPOSITORY https://github.com/openssl/openssl.git
+    GIT_TAG openssl-3.5.0
     SOURCE_DIR ${SOURCE_LOCATION}
     GIT_CLONE_FLAGS "--sparse --filter=tree:0"
     GIT_CLONE_POST_COMMAND "sparse-checkout set --no-cone /* !test"
     GIT_SUBMODULES ""
     UPDATE_COMMAND ""
-    PATCH_COMMAND ${EXEC} git am --3way ${CMAKE_CURRENT_SOURCE_DIR}/openssl-*.patch
+    PATCH_COMMAND ${EXEC} bash -lc "shopt -s nullglob\; for patch in ${CMAKE_CURRENT_SOURCE_DIR}/openssl-*.patch\; do git -C <SOURCE_DIR> apply --check \"$patch\" >/dev/null 2>&1 || git -C <SOURCE_DIR> apply --check --ignore-space-change --ignore-whitespace \"$patch\"\; git -C <SOURCE_DIR> apply \"$patch\" >/dev/null 2>&1 || git -C <SOURCE_DIR> apply --ignore-space-change --ignore-whitespace \"$patch\"\; done"
     CONFIGURE_COMMAND ${EXEC} CONF=1 <SOURCE_DIR>/Configure
         --cross-compile-prefix=${TARGET_ARCH}-
         --prefix=${MINGW_INSTALL_PREFIX}
